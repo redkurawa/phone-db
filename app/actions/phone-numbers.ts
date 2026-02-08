@@ -11,7 +11,7 @@ export async function generateStandardBlock(baseNumber: string, initialDate: Dat
         throw new Error("Unauthorized");
     }
 
-    const numbers = [];
+    const numbers: { number: string; status: "FREE"; initialDate: Date }[] = [];
     // Standard block: baseNumber + 00, then add 0-99
     // Example: 021292630 → 02129263000 to 02129263099
     const baseWithSuffix = baseNumber + "00";
@@ -65,7 +65,7 @@ export async function generateCustomRange(
         throw new Error("Invalid range (max 1000 numbers)");
     }
 
-    const numbers = [];
+    const numbers: { number: string; status: "FREE"; initialDate: Date }[] = [];
     for (let i = start; i <= end; i++) {
         const number = preserveLeadingZeros(i, startNumber);
         numbers.push({
