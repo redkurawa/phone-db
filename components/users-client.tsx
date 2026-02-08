@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Users, CheckCircle, XCircle } from "lucide-react";
+import { Users, CheckCircle, XCircle, Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { approveUser, rejectUser, deleteUser } from "@/app/actions/users";
+import { approveUser, rejectUser, deleteUser, toggleUserRole } from "@/app/actions/users";
 
-export function UsersClient({ users }: { users: any[] }) {
+export function UsersClient({ users, currentUserId }: { users: any[]; currentUserId?: string }) {
     const [processing, setProcessing] = useState<string | null>(null);
 
     const handleApprove = async (userId: string) => {
@@ -29,6 +29,17 @@ export function UsersClient({ users }: { users: any[] }) {
         setProcessing(userId);
         await deleteUser(userId);
         window.location.reload();
+    };
+
+    const handleToggleRole = async (userId: string) => {
+        setProcessing(userId);
+        try {
+            await toggleUserRole(userId);
+            window.location.reload();
+        } catch (error: any) {
+            alert(error.message || "Failed to change role");
+            setProcessing(null);
+        }
     };
 
     const pendingUsers = users.filter((u) => !u.isApproved);
@@ -126,6 +137,15 @@ export function UsersClient({ users }: { users: any[] }) {
                                     <Badge variant={user.role === "ADMIN" ? "default" : "secondary"}>
                                         {user.role}
                                     </Badge>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleToggleRole(user.id)}
+                                        disabled={processing === user.id || user.id === currentUserId}
+                                    >
+                                        <Shield className="w-4 h-4 mr-1" />
+                                        {user.role === "ADMIN" ? "Make Viewer" : "Make Admin"}
+                                    </Button>
                                     <Button
                                         variant="ghost"
                                         size="sm"

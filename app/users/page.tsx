@@ -16,7 +16,7 @@ export default async function UsersPage() {
     return (
         <div>
             <Header />
-            <UsersClient users={users} />
+            <UsersClient users={users} currentUserId={session.user.id} />
         </div>
     );
 }
