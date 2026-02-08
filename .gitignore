@@ -1,0 +1,14 @@
+.next/
+node_modules/
+.env
+.env.local
+.env*.local
+*.log
+.DS_Store
+dist/
+build/
+.vercel
+*.db
+*.db-journal
+.idea/
+.vscode/

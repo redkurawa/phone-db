@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String?
+  image      String?
+  role       Role     @default(VIEWER)
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([email])
+}
+
+model PhoneNumber {
+  id            String          @id @default(cuid())
+  number        String          @unique
+  status        PhoneStatus     @default(FREE)
+  currentClient String?
+  initialDate   DateTime
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  history       NumberHistory[]
+
+  @@index([number])
+}
+
+model NumberHistory {
+  id            String      @id @default(cuid())
+  phoneNumberId String
+  status        PhoneStatus
+  clientName    String?
+  changeDate    DateTime
+  createdAt     DateTime    @default(now())
+  phoneNumber   PhoneNumber @relation(fields: [phoneNumberId], references: [id], onDelete: Cascade)
+
+  @@index([phoneNumberId])
+}
+
+enum Role {
+  ADMIN
+  VIEWER
+}
+
+enum PhoneStatus {
+  FREE
+  USED
+}
